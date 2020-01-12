@@ -38,7 +38,7 @@ class SocialMediaShare extends Component {
                     <div class="wp-smshare-wrapper">
                         <div class="share-on">Share on: </div>
                         {output}
-                        <div class="clear"></div>
+                        <div class="wp-smshare-clear"></div>
                     </div>
                 </div>
             );
