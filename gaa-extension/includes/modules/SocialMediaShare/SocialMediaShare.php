@@ -54,13 +54,13 @@ class GAEX_SocialMediaShare extends ET_Builder_Module
             'box_shadow' => false,
             'button' => false,
             'filters' => false,
-            'fonts' => [
-                'options' => [
+            'fonts' => array(
+                'options' => array(
                     'hide_text_shadow' => true,
                     'hide_line_height' => true,
                     'hide_font' => true
-                ]
-            ],
+                )
+            ),
             'margin_padding' => false,
             'max_width' => false
         );
