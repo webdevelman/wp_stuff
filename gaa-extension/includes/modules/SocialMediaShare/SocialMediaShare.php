@@ -90,7 +90,7 @@ class GAEX_SocialMediaShare extends ET_Builder_Module
         if ($render_string != '') {
             $output = '<div class = "wp-smshare-wrapper"> <div class = "share-on">Share on: </div>';
             $output .= $render_string;
-            $output .= '<div class = "clear"></div></div>';
+            $output .= '<div class = "wp-smshare-clear"></div></div>';
 
             return $output;
         }
