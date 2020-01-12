@@ -20,7 +20,7 @@ class SocialMediaShare extends Component {
                     return;
                 }
                 let platform = platforms[index];
-                let url = platform.base_url +  window.location.href;
+                let url = platform.base_url + window.location.href;
 
                 output.push(
                     <div class="platform" style={{background: platform.color}}>
