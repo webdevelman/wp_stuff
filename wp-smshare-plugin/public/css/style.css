@@ -1,0 +1,33 @@
+.wp-smshare-wrapper div {
+    float: left;
+    margin-right: 10px;
+}
+
+.wp-smshare-wrapper div.share-on {
+    padding: 5px;
+    font-weight: bold;
+}
+
+.wp-smshare-wrapper div.platform {
+    padding: 8px 16px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 1px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.wp-smshare-wrapper div.platform a {
+    color: white;
+    text-decoration: none;
+}
+
+.wp-smshare-wrapper div.platform:hover {
+    opacity: 0.7;
+}
+
+.clear {
+    clear: left;
+}
