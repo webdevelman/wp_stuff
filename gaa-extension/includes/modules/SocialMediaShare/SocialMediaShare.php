@@ -16,32 +16,29 @@ class GAEX_SocialMediaShare extends ET_Builder_Module
     public function init()
     {
         $this->platforms = GAEX_GaaExtension::$platforms;
-        $this->name = esc_html__('Social Media Share', 'gaex-gaa-extension');
+        $this->name = esc_html__( 'Social Media Share', GAEX_GaaExtension::$gettext_domain_name );
     }
 
     public function get_fields()
     {
         $options = array();
-        foreach ($this->platforms as $platform) {
-            $options[$platform['name']] = esc_html__(
-                ucfirst($platform['name']),
-                'et_builder'
-            );
+        foreach ( $this->platforms as $platform ) {
+            $options[ $platform['name'] ] = ucfirst( $platform['name'] );
         }
 
-        $default_array = array_fill(0, count($this->platforms), 'off');
-        $default_str = implode('|', $default_array);
+        $default_array = array_fill( 0, count( $this->platforms ), 'off' );
+        $default_str = implode( '|', $default_array );
 
         return array(
             'platfroms_list' => array(
-                'label' => esc_html__(
+                'label'      => esc_html__(
                     'Available social media platforms',
-                    'et_builder'
+                    GAEX_GaaExtension::$gettext_domain_name
                 ),
-                'type' => 'multiple_checkboxes',
+                'type'    => 'multiple_checkboxes',
                 'options' => $options,
                 'default' => $default_str,
-                'toggle_slug' => 'main_content'
+                'toggle_slug' => 'main_content',
             )
         );
     }
@@ -50,47 +47,46 @@ class GAEX_SocialMediaShare extends ET_Builder_Module
     {
         return array(
             'background' => false,
-            'borders' => false,
+            'borders'    => false,
             'box_shadow' => false,
-            'button' => false,
-            'filters' => false,
-            'fonts' => array(
+            'button'     => false,
+            'filters'    => false,
+            'fonts'      => array(
                 'options' => array(
                     'hide_text_shadow' => true,
                     'hide_line_height' => true,
-                    'hide_font' => true
-                )
+                    'hide_font'        => true
+                ),
             ),
             'margin_padding' => false,
-            'max_width' => false
+            'max_width'      => false,
         );
     }
 
-    public function render($attrs, $content = null, $render_slug)
+    public function render( $attrs, $content = null, $render_slug )
     {
-        global $post;
-
-        $url = esc_url(get_permalink($post->ID));
-        $platfroms_list = explode('|', $this->props['platfroms_list']);
+        $platfroms_list = explode( '|', $this->props['platfroms_list'] );
         $render_string = '';
 
-        foreach ($platfroms_list as $index => $selection) {
-            if ($selection == 'on') {
-                $platform = $this->platforms[$index];
+        foreach ( $platfroms_list as $index => $selection ) {
+            if ( 'on' === $selection ) {
+                $platform = $this->platforms[ $index ];
 
                 $render_string .= sprintf(
-                    '<div class = "platform" style = "background-color:%1$s"><a target = "_blank"  href = "%2$s">%3$s</a></div>',
+                    '<div class="platform" style="background-color:%1$s">
+                    <a target="_blank" href="%2$s">%3$s</a></div>',
                     $platform['color'],
-                    $platform['base_url'] . $url,
-                    ucfirst($platform['name'])
+                    $platform['url'],
+                    esc_html( ucfirst( $platform['name'] ), GAEX_GaaExtension::$gettext_domain_name )
                 );
             }
         }
 
-        if ($render_string != '') {
-            $output = '<div class = "wp-smshare-wrapper"> <div class = "share-on">Share on: </div>';
+        if ( ! empty( $render_string ) ) {
+            $output = '<div class="wp-smshare-wrapper">
+            <div class="share-on">' . esc_html__( 'Share on: ', GAEX_GaaExtension::$gettext_domain_name ) . '</div>';
             $output .= $render_string;
-            $output .= '<div class = "wp-smshare-clear"></div></div>';
+            $output .= '<div class="wp-smshare-clear"></div></div>';
 
             return $output;
         }

@@ -29,33 +29,14 @@ class GAEX_GaaExtension extends DiviExtension
      */
     public $version = '1.0.0';
 
-    public static $platforms = array(
-        array(
-            'name' => 'Facebook',
-            'base_url' => 'http://www.facebook.com/sharer.php?u=',
-            'color' => '#3B579D'
-        ),
-        array(
-            'name' => 'Twitter',
-            'base_url' => 'https://twitter.com/share?url=',
-            'color' => '#2AA9E0'
-        ),
-        array(
-            'name' => 'Reddit',
-            'base_url' => 'http://reddit.com/submit?url=',
-            'color' => '#FF4500'
-        ),
-        array(
-            'name' => 'XING',
-            'base_url' => 'https://www.xing.com/spi/shares/new?url=',
-            'color' => '#00605E'
-        ),
-        array(
-            'name' => 'Pinterest',
-            'base_url' => 'http://pinterest.com/pin/create/button/?url=',
-            'color' => '#E6001A'
-        )
-    );
+    public static $platforms = array();
+
+    public static $gettext_domain_name = '';
+
+    protected function get_current_url() {
+        global $wp;
+        return esc_url( home_url( $wp->request ) . strtok( $_SERVER['REQUEST_URI'], '?' ) );
+    }
 
     /**
      * GAEX_GaaExtension constructor.
@@ -63,16 +44,50 @@ class GAEX_GaaExtension extends DiviExtension
      * @param string $name
      * @param array  $args
      */
-    public function __construct($name = 'gaa-extension', $args = array())
+    public function __construct( $name = 'gaa-extension', $args = array() )
     {
-        $this->plugin_dir = plugin_dir_path(__FILE__);
-        $this->plugin_dir_url = plugin_dir_url($this->plugin_dir);
 
-        $this->_builder_js_data = array(
-            'social_share_platforms' => self::$platforms
+        self::$gettext_domain_name = $this->gettext_domain;
+
+        self::$platforms = array(
+            array(
+                'name'  => esc_html__( 'Facebook', $this->gettext_domain ),
+                'url'   => esc_url( 'http://www.facebook.com/sharer.php?u=' . $this->get_current_url() ),
+                'color' => esc_attr( '#3B579D' ),
+            ),
+            array(
+                'name'  => esc_html__( 'Twitter', $this->gettext_domain ),
+                'url'   => esc_url( 'https://twitter.com/share?url=' . $this->get_current_url() ),
+                'color' => esc_attr( '#2AA9E0' ),
+            ),
+            array(
+                'name'  => esc_html__( 'Reddit', $this->gettext_domain ),
+                'url'   => esc_url( 'http://reddit.com/submit?url=' . $this->get_current_url() ),
+                'color' => esc_attr( '#FF4500' ),
+            ),
+            array(
+                'name'  => esc_html__( 'XING', $this->gettext_domain ),
+                'url'   => esc_url( 'https://www.xing.com/spi/shares/new?url=' . $this->get_current_url() ),
+                'color' => esc_attr( '#00605E' ),
+            ),
+            array(
+                'name'  => esc_html__( 'Pinterest', $this->gettext_domain ),
+                'url'   => esc_url( 'http://pinterest.com/pin/create/button/?url=' . $this->get_current_url() ),
+                'color' => esc_attr( '#E6001A' ),
+            ),
         );
 
-        parent::__construct($name, $args);
+        $this->plugin_dir = plugin_dir_path( __FILE__ );
+        $this->plugin_dir_url = plugin_dir_url( $this->plugin_dir );
+
+        $this->_builder_js_data = array(
+            'social_share_platforms' => self::$platforms,
+            'l10n' => array(
+                'share_on' => esc_html__( 'Share On', $this->gettext_domain ),
+            )
+        );
+
+        parent::__construct( $name, $args );
     }
 }
 

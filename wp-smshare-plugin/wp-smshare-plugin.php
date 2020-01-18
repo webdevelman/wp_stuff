@@ -2,71 +2,62 @@
 /**
  * Plugin Name: WP Social Share Buttons
  * Plugin URI: http://webdevgaa.ga/
- * Description: Social Media Share buttons for your pages and posts. Check the 'Social Media Share' menu in Settings.
+ * Description: Social Media Share platforms for your pages and posts. Check the 'Social Media Share' menu in Settings.
  * Version: 1.0
  * Author: Anton Gurievsky
  * Author URI: http://webdevelman.ga
  */
 
-if (!class_exists('WP_smshare_buttons')) {
-    class WP_smshare_buttons
+if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
+    class WP_Smshare_Buttons
     {
-        protected $buttons = array(
-            'wp_smshare_facebook' => array(
-                'name' => 'Facebook',
-                'base_url' => 'http://www.facebook.com/sharer.php?u=',
-                'color' => '3B579D'
-            ),
-            'wp_smshare_twitter' => array(
-                'name' => 'Twitter',
-                'base_url' => 'https://twitter.com/share?url=',
-                'color' => '2AA9E0'
-            ),
-            'wp_smshare_reddit' => array(
-                'name' => 'Reddit',
-                'base_url' => 'http://reddit.com/submit?url=',
-                'color' => 'FF4500'
-            ),
-            'wp_smshare_xing' => array(
-                'name' => 'XING',
-                'base_url' => 'https://www.xing.com/spi/shares/new?url=',
-                'color' => '00605E'
-            ),
-            'wp_smshare_pinterest' => array(
-                'name' => 'Pinterest',
-                'base_url' => 'http://pinterest.com/pin/create/button/?url=',
-                'color' => 'E6001A'
-            )
-        );
+        protected static $platforms = array();
 
         protected $page_slug = 'wp_smshare';
 
         protected $config_section = 'wp_smshare_config_section';
 
+        protected static $gettext_domain = 'wp_smshare_text_domain';
+
+        protected static $option_prefix = 'wp_smshare';
+
+        protected static function init() {
+            self::$platforms = array(
+                array(
+                    'name'     => esc_html__( 'Facebook', self::$gettext_domain ),
+                    'base_url' => 'http://www.facebook.com/sharer.php?u=',
+                    'color'    => '#3B579D',
+                ),
+                array(
+                    'name'     => esc_html__( 'Twitter', self::$gettext_domain ),
+                    'base_url' => 'https://twitter.com/share?url=',
+                    'color'    => '#2AA9E0',
+                ),
+                array(
+                    'name'     => esc_html__( 'Reddit', self::$gettext_domain ),
+                    'base_url' => 'http://reddit.com/submit?url=',
+                    'color'    => '#FF4500',
+                ),
+                array(
+                    'name'     => esc_html__( 'XING', self::$gettext_domain ),
+                    'base_url' => 'https://www.xing.com/spi/shares/new?url=',
+                    'color'    => '#00605E',
+                ),
+                array(
+                    'name'     => esc_html__( 'Pinterest', self::$gettext_domain ),
+                    'base_url' => 'http://pinterest.com/pin/create/button/?url=',
+                    'color'    => '#E6001A',
+                ),
+            );
+        }
+
         /**
          *
          * @return void
          */
-        public function __construct()
-        {
-            // admin
-            add_action('admin_menu', array($this, 'wp_smshare_menu_item'));
-            add_action('admin_init', array($this, 'wp_smshare_settings'), 10);
+        protected static function get_field_name( $button_name ) {
 
-            // front
-            add_filter(
-                'the_content',
-                array($this, 'show_wp_smshare_platforms'),
-                10,
-                1
-            );
-            add_action('wp_enqueue_scripts', array(
-                $this,
-                'wp_smshare_front_scripts'
-            ));
-
-            // plugin uninstallation
-            register_uninstall_hook(__FILE__, 'wp_smshare_uninstall');
+            return self::$option_prefix . '_' . strtolower( $button_name );
         }
 
         /**
@@ -75,10 +66,32 @@ if (!class_exists('WP_smshare_buttons')) {
          */
         public static function wp_smshare_uninstall()
         {
-            foreach (array_keys($this->buttons) as $platform) {
-                delete_option($platform);
+            self::init();
+            foreach ( self::$platforms as $platform ) {
+                $option = self::get_field_name( $platform['name'] );
+                delete_option( $option );
             }
         }
+
+        /**
+         *
+         * @return void
+         */
+        public function __construct()
+        {
+            self::init();
+            // admin
+            add_action( 'admin_menu', array( $this, 'wp_smshare_menu_item' ) );
+            add_action( 'admin_init', array( $this, 'wp_smshare_settings' ), 10 );
+
+            // front
+            add_filter( 'the_content', array( $this, 'show_wp_smshare_platforms' ), 10, 1 );
+            add_action( 'wp_enqueue_scripts', array( $this, 'wp_smshare_front_scripts') );
+
+            // plugin uninstallation
+            register_uninstall_hook( __FILE__, 'wp_smshare_uninstall' );
+        }
+
 
         /**
          *
@@ -87,11 +100,11 @@ if (!class_exists('WP_smshare_buttons')) {
         public function wp_smshare_menu_item()
         {
             add_options_page(
-                "Social media share buttons",
-                "Social Media Share",
-                "manage_options",
-                $this->page_slug,
-                array($this, "wp_smshare_page")
+                esc_html__( 'Social media share platforms', self::$gettext_domain ),
+                esc_html__( 'Social Media Share', self::$gettext_domain ),
+                'manage_options',
+                sanitize_text_field( $this->page_slug ),
+                array( $this, "wp_smshare_page" )
             );
         }
 
@@ -101,12 +114,12 @@ if (!class_exists('WP_smshare_buttons')) {
          */
         public function wp_smshare_page()
         {
-            echo '<div class = "wrap">
-                <h1>Available social media platforms</h1>
-                <form action = "options.php" method = "POST">';
+            echo '<div class="wrap">
+                <h1>' . esc_html__( 'Available social media platforms', self::$gettext_domain ) . '</h1>
+                <form action="options.php" method="POST">';
 
-            settings_fields($this->config_section);
-            do_settings_sections($this->page_slug);
+            settings_fields( $this->config_section );
+            do_settings_sections( sanitize_text_field( $this->page_slug ) );
             submit_button();
 
             echo '</form></div>';
@@ -125,22 +138,22 @@ if (!class_exists('WP_smshare_buttons')) {
                 $this->page_slug
             );
 
-            foreach ($this->buttons as $field => $info) {
-                $description = $info['name'];
+            foreach ( self::$platforms as $info ) {
+                $field = self::get_field_name( $info['name'] );
                 $args = array(
                     'type' => $field
                 );
-                $callback = array($this, 'print_input_field');
+                $callback = array( $this, 'print_input_field' );
 
                 add_settings_field(
-                    $field,
-                    $description,
+                    $info['name'],
+                    $info['name'],
                     $callback,
                     $this->page_slug,
                     $this->config_section,
                     $args
                 );
-                register_setting($this->config_section, $field);
+                register_setting( $this->config_section, $field );
             }
         }
 
@@ -148,44 +161,43 @@ if (!class_exists('WP_smshare_buttons')) {
          *
          * @return void
          */
-        public function print_input_field(array $args)
+        public function print_input_field( array $args )
         {
             $type = $args['type'];
-            $checked = get_option($type) === '1' ? 'checked = "checked"' : '';
-            echo '<input type = "checkbox" name = "' .
-                $type .
-                '" value = "1" ' .
-                $checked .
-                ' />';
+            $checked = ( '1' === sanitize_text_field( get_option( $type ) ) ) ? 'checked = "checked"' : '';
+            printf( '<input type="checkbox" name="%1$s" value="1" %2$s />',
+                esc_attr( $type ),
+                esc_html( $checked )
+            );
         }
 
         /**
          *
          * @return string
          */
-        public function show_wp_smshare_platforms($content)
+        public function show_wp_smshare_platforms( $content )
         {
             global $post;
 
             $render_string = '';
-            $url = esc_url(get_permalink($post->ID));
-            foreach ($this->buttons as $field => $type_info) {
-                if (get_option($field) == 1) {
-                    $render_string .='<div class = "platform" style = "background-color: #' .
-                        $type_info['color'] .
-                        ';"><a target = "_blank"  href = "' .
-                        $type_info['base_url'] .
-                        $url .
-                        '">' .
-                        $type_info['name'] .
-                        '</a></div>';
+            $url =  get_permalink( $post->ID );
+            foreach ( self::$platforms as $platform ) {
+                if ( '1' === sanitize_text_field( get_option( self::get_field_name( $platform['name'] ) ) ) ) {
+                    $render_string .= sprintf(
+                        '<div class="platform" style="background-color:%1$s">
+                        <a target="_blank" href="%2$s">%3$s</a></div>',
+                        esc_attr( $platform['color'] ),
+                        esc_url( $platform['base_url'] . $url ),
+                        esc_html( ucfirst( $platform['name'] ) )
+                    );
                 }
             }
 
-            if ($render_string != '') {
-                $output = '<div class = "wp-smshare-wrapper"> <div class = "share-on">Share on: </div>';
+            if ( ! empty( $render_string ) ) {
+                $output = '<div class="wp-smshare-wrapper">
+                <div class="share-on">' . esc_html__( 'Share on:', self::$gettext_domain ) . ' </div>';
                 $output .= $render_string;
-                $output .= '<div class = "wp-smshare-clear"></div></div>';
+                $output .= '<div class="wp-smshare-clear"></div></div>';
 
                 return $output;
             }
@@ -201,11 +213,12 @@ if (!class_exists('WP_smshare_buttons')) {
         {
             wp_register_style(
                 "wp-smshare-style-file",
-                plugin_dir_url(__FILE__) . "/public/css/style.css"
+                plugin_dir_url( __FILE__ ) . "/public/css/style.css"
             );
-            wp_enqueue_style("wp-smshare-style-file");
+            wp_enqueue_style( "wp-smshare-style-file" );
         }
     }
+
 }
 
-new WP_smshare_buttons();
+new WP_Smshare_Buttons();
