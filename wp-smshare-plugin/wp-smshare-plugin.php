@@ -8,6 +8,11 @@
  * Author URI: http://webdevelman.ga
  */
 
+
+if( ! function_exists( 'add_action' ) || 'cli' === php_sapi_name() ) {
+    die( 'Not allowed' );
+}
+
 if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
     class WP_Smshare_Buttons
     {
@@ -21,7 +26,8 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
 
         protected static $option_prefix = 'wp_smshare';
 
-        protected static function init() {
+        protected static function init_platforms() {
+
             self::$platforms = array(
                 array(
                     'name'     => esc_html__( 'Facebook', self::$gettext_domain ),
@@ -66,7 +72,7 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
          */
         public static function wp_smshare_uninstall()
         {
-            self::init();
+            self::init_platforms();
             foreach ( self::$platforms as $platform ) {
                 $option = self::get_field_name( $platform['name'] );
                 delete_option( $option );
@@ -79,7 +85,9 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
          */
         public function __construct()
         {
-            self::init();
+            $this->page_slug = sanitize_text_field( $this->page_slug );
+
+            self::init_platforms();
             // admin
             add_action( 'admin_menu', array( $this, 'wp_smshare_menu_item' ) );
             add_action( 'admin_init', array( $this, 'wp_smshare_settings' ), 10 );
@@ -103,7 +111,7 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
                 esc_html__( 'Social media share platforms', self::$gettext_domain ),
                 esc_html__( 'Social Media Share', self::$gettext_domain ),
                 'manage_options',
-                sanitize_text_field( $this->page_slug ),
+                $this->page_slug,
                 array( $this, "wp_smshare_page" )
             );
         }
@@ -119,7 +127,7 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
                 <form action="options.php" method="POST">';
 
             settings_fields( $this->config_section );
-            do_settings_sections( sanitize_text_field( $this->page_slug ) );
+            do_settings_sections( $this->page_slug );
             submit_button();
 
             echo '</form></div>';
@@ -153,7 +161,7 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
                     $this->config_section,
                     $args
                 );
-                register_setting( $this->config_section, $field );
+                register_setting( $this->config_section, $field, 'intval' );
             }
         }
 
@@ -164,10 +172,10 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
         public function print_input_field( array $args )
         {
             $type = $args['type'];
-            $checked = ( '1' === sanitize_text_field( get_option( $type ) ) ) ? 'checked = "checked"' : '';
+            $checked = ( 1 === intval( wp_unslash( get_option( $type ) ) ) ) ? 'checked = "checked"' : '';
             printf( '<input type="checkbox" name="%1$s" value="1" %2$s />',
-                esc_attr( $type ),
-                esc_html( $checked )
+                sanitize_text_field( $type ),
+                sanitize_text_field( $checked )
             );
         }
 
@@ -182,7 +190,7 @@ if ( ! class_exists( 'WP_Smshare_Buttons' ) ) {
             $render_string = '';
             $url =  get_permalink( $post->ID );
             foreach ( self::$platforms as $platform ) {
-                if ( '1' === sanitize_text_field( get_option( self::get_field_name( $platform['name'] ) ) ) ) {
+                if ( 1 === intval( wp_unslash( get_option( self::get_field_name( $platform['name'] ) ) ) ) ) {
                     $render_string .= sprintf(
                         '<div class="platform" style="background-color:%1$s">
                         <a target="_blank" href="%2$s">%3$s</a></div>',
