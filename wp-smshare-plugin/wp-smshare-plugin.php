@@ -23,7 +23,6 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		private static $option_prefix = 'wp_smshare';
 		private static $instance;
 
-
 		private static function init_platforms()
 		{
 
@@ -172,7 +171,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		}
 
 		/**
-		 *
+		 * @param Array $args
 		 * @return void
 		 */
 		public function print_input_field( array $args )
@@ -186,6 +185,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 
 		/**
 		 *
+		 * @param String $content
 		 * @return string
 		 */
 		public function show_wp_smshare_platforms( $content )
@@ -215,7 +215,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 				return $content . $output;
 			}
 
-			return;
+			return $content;
 		}
 
 		/**
@@ -233,7 +233,6 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 	}
 
 }
-
 
 function wp_smshare_init_plugin()
 {
