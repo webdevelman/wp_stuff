@@ -19,7 +19,6 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		private static $platforms = array();
 		private $page_slug = 'wp_smshare';
 		private $config_section = 'wp_smshare_config_section';
-		private static $gettext_domain = 'wp_smshare_text_domain';
 		private static $option_prefix = 'wp_smshare';
 		private static $instance;
 
@@ -28,27 +27,27 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 
 			self::$platforms = array(
 				array(
-					'name'     => esc_html__( 'Facebook', self::$gettext_domain ),
+					'name'     => esc_html__( 'Facebook', 'GaaSmShare' ),
 					'base_url' => 'http://www.facebook.com/sharer.php?u=',
 					'color'    => '#3B579D',
 				),
 				array(
-					'name'     => esc_html__( 'Twitter', self::$gettext_domain ),
+					'name'     => esc_html__( 'Twitter', 'GaaSmShare' ),
 					'base_url' => 'https://twitter.com/share?url=',
 					'color'    => '#2AA9E0',
 				),
 				array(
-					'name'     => esc_html__( 'Reddit', self::$gettext_domain ),
+					'name'     => esc_html__( 'Reddit', 'GaaSmShare' ),
 					'base_url' => 'http://reddit.com/submit?url=',
 					'color'    => '#FF4500',
 				),
 				array(
-					'name'     => esc_html__( 'XING', self::$gettext_domain ),
+					'name'     => esc_html__( 'XING', 'GaaSmShare' ),
 					'base_url' => 'https://www.xing.com/spi/shares/new?url=',
 					'color'    => '#00605E',
 				),
 				array(
-					'name'     => esc_html__( 'Pinterest', self::$gettext_domain ),
+					'name'     => esc_html__( 'Pinterest', 'GaaSmShare' ),
 					'base_url' => 'http://pinterest.com/pin/create/button/?url=',
 					'color'    => '#E6001A',
 				),
@@ -85,8 +84,8 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		public function __construct()
 		{
 			if ( isset( self::$instance ) ) {
-				wp_die( sprintf( esc_html__( '%s is a singleton class and you cannot create a second instance.', self::$gettext_domain ),
-						get_class( $this ) )
+				wp_die( sprintf( esc_html__( '%s is a singleton class and you cannot create a second instance.', 'GaaSmShare' ),
+						esc_html( get_class( $this ) ) )
 				);
 			}
 			self::$instance = $this;
@@ -113,8 +112,8 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		public function wp_smshare_menu_item()
 		{
 			add_options_page(
-				esc_html__( 'Social media share platforms', self::$gettext_domain ),
-				esc_html__( 'Social Media Share', self::$gettext_domain ),
+				esc_html__( 'Social media share platforms', 'GaaSmShare' ),
+				esc_html__( 'Social Media Share', 'GaaSmShare' ),
 				'manage_options',
 				$this->page_slug,
 				array( $this, "wp_smshare_page" )
@@ -128,7 +127,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		public function wp_smshare_page()
 		{
 			echo '<div class="wrap">
-                <h1>' . esc_html__( 'Available social media platforms', self::$gettext_domain ) . '</h1>
+                <h1>' . esc_html__( 'Available social media platforms', 'GaaSmShare' ) . '</h1>
                 <form action="options.php" method="POST">';
 
 			settings_fields( $this->config_section );
@@ -208,7 +207,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 
 			if ( ! empty( $render_string ) ) {
 				$output = '<div class="wp-smshare-wrapper">
-                <div class="share-on">' . esc_html__( 'Share on:', self::$gettext_domain ) . ' </div>';
+                <div class="share-on">' . esc_html__( 'Share on:', 'GaaSmShare' ) . ' </div>';
 				$output .= $render_string;
 				$output .= '<div class="wp-smshare-clear"></div></div>';
 
