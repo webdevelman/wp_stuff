@@ -22,8 +22,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		private static $option_prefix = 'wp_smshare';
 		private static $instance;
 
-		private static function init_platforms()
-		{
+		private static function init_platforms() {
 
 			self::$platforms = array(
 				array(
@@ -58,8 +57,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		private static function get_field_name( $button_name )
-		{
+		private static function get_field_name( $button_name ) {
 
 			return self::$option_prefix . '_' . strtolower( $button_name );
 		}
@@ -68,8 +66,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public static function wp_smshare_uninstall()
-		{
+		public static function wp_smshare_uninstall() {
 			self::init_platforms();
 			foreach ( self::$platforms as $platform ) {
 				$option = self::get_field_name( $platform[ 'name' ] );
@@ -81,8 +78,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public function __construct()
-		{
+		public function __construct() {
 			if ( isset( self::$instance ) ) {
 				wp_die( sprintf( esc_html__( '%s is a singleton class and you cannot create a second instance.', 'GaaSmShare' ),
 						esc_html( get_class( $this ) ) )
@@ -109,8 +105,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public function wp_smshare_menu_item()
-		{
+		public function wp_smshare_menu_item() {
 			add_options_page(
 				esc_html__( 'Social media share platforms', 'GaaSmShare' ),
 				esc_html__( 'Social Media Share', 'GaaSmShare' ),
@@ -124,8 +119,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public function wp_smshare_page()
-		{
+		public function wp_smshare_page() {
 			echo '<div class="wrap">
                 <h1>' . esc_html__( 'Available social media platforms', 'GaaSmShare' ) . '</h1>
                 <form action="options.php" method="POST">';
@@ -141,8 +135,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public function wp_smshare_settings()
-		{
+		public function wp_smshare_settings() {
 			add_settings_section(
 				$this->config_section,
 				"",
@@ -173,8 +166,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 * @param Array $args
 		 * @return void
 		 */
-		public function print_input_field( array $args )
-		{
+		public function print_input_field( array $args ) {
 			$type = $args[ 'type' ];
 			printf( '<input type="checkbox" name="%1$s" value="1" %2$s />',
 				esc_attr( $type ),
@@ -187,8 +179,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 * @param String $content
 		 * @return string
 		 */
-		public function show_wp_smshare_platforms( $content )
-		{
+		public function show_wp_smshare_platforms( $content ) {
 			global $post;
 
 			$render_string = '';
@@ -221,8 +212,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 		 *
 		 * @return void
 		 */
-		public function wp_smshare_front_scripts()
-		{
+		public function wp_smshare_front_scripts() {
 			wp_register_style(
 				"wp-smshare-style-file",
 				plugin_dir_url( __FILE__ ) . "/public/css/style.css"
@@ -233,8 +223,7 @@ if ( ! class_exists( 'WP_Smshare_Platforms' ) ) {
 
 }
 
-function wp_smshare_init_plugin()
-{
+function wp_smshare_init_plugin() {
 	new WP_Smshare_Platforms();
 }
 
